@@ -1,0 +1,39 @@
+{
+  "name": "onigiri_tron",
+  "version": "1.0.0",
+  "description": "OnigiriBank Smart Contract for Tron Blockchain",
+  "main": "tronbox-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VanijaDev/onigiri_tron.git"
+  },
+  "keywords": [
+    "Onigiri",
+    "OnigiriBank",
+    "Tron",
+    "TRX"
+  ],
+  "author": "Ivan Solomichev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VanijaDev/onigiri_tron/issues"
+  },
+  "homepage": "https://github.com/VanijaDev/onigiri_tron#readme",
+  "dependencies": {
+    "tronweb": "^2.5.5"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "move-cli": "^1.2.1",
+    "bignumber.js": "8.1.1",
+    "http-server": "^0.11.1"
+  }
+}
