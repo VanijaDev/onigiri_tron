@@ -361,6 +361,6 @@ contract Onigiri {
      * @return Sun amount
     */
     function toSun(uint256 _trx) private pure returns (uint256 _res) {
-        _res = _num.mul(10**6);
+        _res = _trx.mul(10**6);
     }
 }

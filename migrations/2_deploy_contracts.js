@@ -1,5 +1,5 @@
-// var MyContract = artifacts.require("./MyContract.sol");
+let Onigiri = artifacts.require("./Onigiri.sol");
 
-module.exports = function(deployer) {
-  // deployer.deploy(MyContract);
+module.exports = function (deployer) {
+  deployer.deploy(Onigiri);
 };
