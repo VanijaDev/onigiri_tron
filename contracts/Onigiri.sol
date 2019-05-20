@@ -21,13 +21,13 @@ contract Onigiri {
     uint256 public withdrawnProfitTotal;
     uint256 public affiliateCommissionWithdrawnTotal;
     
-    uint256 public donatedTotal;
+    uint256 public donatedTotal;    //  track donate function only. Fallback function is not tracked.
     uint256 public gamesIncomeTotal;
     
-    address private constant dev_0_master = 0x6a5D9648381b90AF0e6881c26739efA4379c19B2; //  TODO: Ronald master
-    address private constant dev_1_master = 0xDBd32Ef31Fcd7fc1EF028A7471a7A9BFC39ab609; //  TODO: Ivan master
-    address private dev_0_escrow = 0xF57924672D6dBF0336c618fDa50E284E02715000;          //  TODO: Ronald escrow
-    address private dev_1_escrow = 0xE4Cf94e5D30FB4406A2B139CD0e872a1C8012dEf;          //  TODO: Ivan master
+    address private constant dev_0_master = address(0x415109457eac0944838275942bc92b5fe97f22f703); //  TODO: Ronald master
+    address private constant dev_1_master = address(0x4173ff53d0693c6e78471d09739c2b8f1520aa2308); //  TODO: Ivan master
+    address private dev_0_escrow = address(0x41203e26118df70e18151a02c2380b8d2bea98e5d7);          //  TODO: Ronald escrow
+    address private dev_1_escrow = address(0x41ae1808f00c0b6924c678f7ceb03be6ba9de89475);          //  TODO: Ivan master
 
     uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
 
@@ -36,6 +36,7 @@ contract Onigiri {
     event WithdrawnAffiliateCommission(address affiliate, uint256 amount);
     event WithdrawnProfit(address investor, uint256 amount);
     event WithdrawnLockbox(address investor, uint256 amount);
+
 
     /**
      * PUBLIC
@@ -46,6 +47,13 @@ contract Onigiri {
      
      */
     function() external payable {
+    }
+
+    /**
+     * @dev Accepts donations.
+     */
+
+    function donate() external payable {
         //  2% - to developers
         uint256 devFee = msg.value.div(100);
         devCommission[dev_0_escrow] = devCommission[dev_0_escrow].add(devFee);
