@@ -51,6 +51,7 @@ contract Onigiri {
 
     /**
      * @dev Accepts donations.
+     * TESTED
      */
 
     function donate() external payable {
@@ -64,7 +65,7 @@ contract Onigiri {
 
     /**
      * @dev Accepts income from games for Onigiry ecosystem.
-     
+     * TESTED
      */
     function fromGame() external payable {
         //  4% - to developers
@@ -79,7 +80,7 @@ contract Onigiri {
      * @dev Returns invested amount for investor.
      * @param _address Investor address.
      * @return invested amount.
-     
+     * TESTED     
      */
     function getInvested(address _address) public view returns(uint256) {
         return investors[_address].invested;
@@ -89,7 +90,7 @@ contract Onigiri {
      * @dev Returns lockbox amount for investor.
      * @param _address Investor address.
      * @return lockbox amount.
-     
+     * TESTED     
      */
     function getLockBox(address _address) public view returns(uint256) {
         return investors[_address].lockbox;
@@ -109,7 +110,7 @@ contract Onigiri {
      * @dev Returns last investment time amount for investor.
      * @param _address Investor address.
      * @return last investment time.
-     
+     * TESTED
      */
     function getLastInvestmentTime(address _address) public view returns(uint256) {
         return investors[_address].lastInvestmentTime;
@@ -136,7 +137,7 @@ contract Onigiri {
     /**
      * @dev User invests funds.
      * @param _affiliate affiliate address.
-     
+     * TESTED
      */
     function invest(address _affiliate) public payable {
         require(msg.value >= minInvest, "min 250 TRX");
@@ -283,8 +284,20 @@ contract Onigiri {
     function calculateProfit(address _investor) public view returns(uint256){
         uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600);
         uint256 rate = percentRateInternal(investors[_investor].lockbox);
-        uint256 calculatedPercent = hourDifference.mul(rate);
-        return investors[_investor].lockbox.div(100000).mul(calculatedPercent);
+        return profitFor(hourDifference, rate, investors[_investor].lockbox);
+    }
+
+    /**
+     * @dev Calculates pending profit for provided duration, rate, lockbox amount.
+     * @param _duration Investment duration.
+     * @param _rate Rate for investment.
+     * @param _lockboxAmount Amount in lockbox.
+     * @return pending profit.
+     
+     */
+    function profitFor(uint256 _duration, uint256 _rate, uint256 _lockboxAmount) public pure returns (uint256) {
+        uint256 calculatedPercent = _duration.mul(_rate);
+        return _lockboxAmount.div(100000).mul(calculatedPercent);
     }
 
     /**
