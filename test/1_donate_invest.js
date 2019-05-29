@@ -43,7 +43,7 @@ contract("Donations", (accounts) => {
   let onigiri;
 
   beforeEach("setup", async () => {
-    wait(1);
+    await wait(1);
     await tronWeb.setPrivateKey(DEPLOYER_PRIV);
     onigiri = await tronWeb.contract().new({
       abi: Onigiri.abi,
@@ -54,10 +54,10 @@ contract("Donations", (accounts) => {
 
   it("accounts", () => {
     console.log("\n");
-    console.log(tronWeb.address.toHex(DEV_0_MASTER));
-    console.log(tronWeb.address.toHex(DEV_1_MASTER));
-    console.log(tronWeb.address.toHex(DEV_0_ESCROW));
-    console.log(tronWeb.address.toHex(DEV_1_ESCROW));
+    console.log("DEV_0_MASTER: ", tronWeb.address.toHex(DEV_0_MASTER));
+    console.log("DEV_1_MASTER: ", tronWeb.address.toHex(DEV_1_MASTER));
+    console.log("DEV_0_ESCROW: ", tronWeb.address.toHex(DEV_0_ESCROW));
+    console.log("DEV_1_ESCROW: ", tronWeb.address.toHex(DEV_1_ESCROW));
   });
 
   describe("Donations", () => {
@@ -358,6 +358,36 @@ contract("Donations", (accounts) => {
 
       assert.equal(tronWeb.address.toHex(INVESTOR_0), tronWeb.address.toHex(events[0].result.investor), "wrong investor address in Invested event");
       assert.equal(tronWeb.toSun(400), events[0].result.amount, "wrong amount in Invested event");
+    });
+
+    it("should validate InvestorInfo after on multiple investments", async () => {
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+
+      //  1
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      let investorDetails = await onigiri.investors(INVESTOR_0).call();
+      assert.equal(tronWeb.toSun(300), (await investorDetails.invested).toNumber(), "wrong invested amount");
+      assert.equal(tronWeb.toSun(252), (await investorDetails.lockbox).toNumber(), "wrong lockbox amount");
+      assert.equal(0, (await investorDetails.withdrawn).toNumber(), "wrong withdrawn amount");
+      assert.equal(-1, BigNumber(0).comparedTo(await investorDetails.lastInvestmentTime), "wrong lastInvestmentTime");
+
+      //  2
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(400),
+        shouldPollResponse: true
+      });
+
+      investorDetails = await onigiri.investors(INVESTOR_0).call();
+      assert.equal(tronWeb.toSun(700), (await investorDetails.invested).toNumber(), "wrong invested amount, should be 700");
+      assert.equal(tronWeb.toSun(588), (await investorDetails.lockbox).toNumber(), "wrong lockbox amount, should be 588");
+      assert.equal(0, (await investorDetails.withdrawn).toNumber(), "wrong withdrawn amount");
+      assert.equal(-1, BigNumber(0).comparedTo(await investorDetails.lastInvestmentTime), "wrong lastInvestmentTime");
     });
   });
 });

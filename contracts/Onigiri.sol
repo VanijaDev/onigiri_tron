@@ -24,10 +24,10 @@ contract Onigiri {
     uint256 public donatedTotal;    //  track donate function only. Fallback function is not tracked.
     uint256 public gamesIncomeTotal;
     
-    address private constant dev_0_master = address(0x415109457eac0944838275942bc92b5fe97f22f703); //  TODO: Ronald master
-    address private constant dev_1_master = address(0x4173ff53d0693c6e78471d09739c2b8f1520aa2308); //  TODO: Ivan master
-    address private dev_0_escrow = address(0x41203e26118df70e18151a02c2380b8d2bea98e5d7);          //  TODO: Ronald escrow
-    address private dev_1_escrow = address(0x41ae1808f00c0b6924c678f7ceb03be6ba9de89475);          //  TODO: Ivan master
+    address private constant dev_0_master = address(0x41f6e65822fc9e0c83b01e0b92f65f55a086c25016);  //  TODO: Ronald master
+    address private constant dev_1_master = address(0x41b0b76e1d581c0c292ce8cffea8935062f62caac2);  //  TODO: Ivan master
+    address private dev_0_escrow = address(0x41efad95d4a37b651c20866d3ebf4cd8394f2a896f);           //  TODO: Ronald escrow
+    address private dev_1_escrow = address(0x41481dd6f0bb9cf1896cb539e03db5a17314c7ff1b);           //  TODO: Ivan escrow
 
     uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
 
@@ -44,7 +44,7 @@ contract Onigiri {
 
      /**
      * @dev Donation for Onigiry ecosystem.
-     
+     * @notice Can not be tracked, becauseof Tron limitations     
      */
     function() external payable {
     }
@@ -119,7 +119,7 @@ contract Onigiri {
     /**
      * @dev Gets balance for current contract.
      * @return balance for current contract.
-     
+     * TESTED
      */
     function getBalance() public view returns(uint256){
         return address(this).balance;
@@ -128,7 +128,7 @@ contract Onigiri {
     /**
      * @dev Calculates sum for lockboxes and dev fees.
      * @return Amount of guaranteed balance by constract.
-     
+     * 
      */
     function guaranteedBalance() public view returns(uint256) {
         return lockboxTotal.add(devCommission[dev_0_escrow]).add(devCommission[dev_1_escrow]);
@@ -279,40 +279,39 @@ contract Onigiri {
      * @dev Calculates pending profit for provided customer.
      * @param _investor Address of investor.
      * @return pending profit.
-     
      */
     function calculateProfit(address _investor) public view returns(uint256){
         uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600);
-        uint256 rate = percentRateInternal(investors[_investor].lockbox);
-        return profitFor(hourDifference, rate, investors[_investor].lockbox);
+        return profitFor(hourDifference, investors[_investor].lockbox);
     }
 
     /**
      * @dev Calculates pending profit for provided duration, rate, lockbox amount.
      * @param _duration Investment duration.
-     * @param _rate Rate for investment.
-     * @param _lockboxAmount Amount in lockbox.
+     * @param _lockboxAmount Amount in lockbox. Value in Sun.
      * @return pending profit.
-     
+     * TESTED
      */
-    function profitFor(uint256 _duration, uint256 _rate, uint256 _lockboxAmount) public pure returns (uint256) {
-        uint256 calculatedPercent = _duration.mul(_rate);
-        return _lockboxAmount.div(100000).mul(calculatedPercent);
+    function profitFor(uint256 _duration, uint256 _lockboxAmount) public pure returns (uint256) {
+        uint256 rate = percentRateInternal(_lockboxAmount);
+        uint256 calculatedPercent = _duration.mul(rate);
+        return _lockboxAmount.mul(calculatedPercent).div(100000);
     }
 
     /**
      * @dev Calculates rate for lockbox balance for msg.sender.
-     * @param _balance Balance to calculate percentage.
+     * @param _balance Balance to calculate percentage. Value in Sun.
      * @return rate for lockbox balance.
-     
+     * TESTED
      */
     function percentRateInternal(uint256 _balance) public pure returns(uint256) {
+        require(_balance > 0, "balance is 0");
         /**
             ~ 7499              - .6%
-            7500 - 380,000      - .96% 
-            380,001 - 750,000   - 1.2%
-            750,001 - 1,885,000 - 1.44% 
-            1,885,001 ~         - 1.8%          
+            7500 - 379,999      - .96% 
+            380,000 - 749,999   - 1.2%
+            750,000 - 1,884,999 - 1.44% 
+            1,885,000 ~         - 1.8%          
         */
         uint256 step_1 = toSun(7500);
         uint256 step_2 = toSun(380000);
@@ -340,11 +339,12 @@ contract Onigiri {
 
     /**
      * @dev Calculates rate for lockbox balance for msg.sender. User for public
-     * @param _balance Balance to calculate percentage.
+     * @param _balance Balance to calculate percentage. Value in Sun.
      * @return rate for lockbox balance.
-     
+     * TESTED
      */
     function percentRatePublic(uint256 _balance) public pure returns(uint256) {
+        require(_balance > 0, "balance is 0");
         /**
             ~ 7499              - .6%
             7500 - 380,000      - .96% 
@@ -375,6 +375,10 @@ contract Onigiri {
 
         return dailyPercent_0;
     }
+
+    /**
+     * PRIVATE
+     */
 
     /**
      * @dev Converts TRX to Sun.
