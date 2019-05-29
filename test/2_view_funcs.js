@@ -204,7 +204,7 @@ contract("Donations", (accounts) => {
     });
   })
 
-  describe("profitFor", () => {
+  describe.only("profitFor", () => {
     it("should validate profitFor for 0 hours, 1000 lockbox", async () => {
       let profit = (await onigiri.profitFor(0, tronWeb.toSun(1000)).call()).toNumber();
       console.log("\nprofitFor for 0 hours, 1000 lockbox: ", profit);
@@ -223,14 +223,14 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(1, tronWeb.toSun(7500)).call()).toNumber();
       console.log("\nnprofitFor for 1 hour, 7500 lockbox: ", profit);
 
-      assert.equal(3000000, profit, "wrong value");
+      assert.equal(1875000, profit, "wrong value");
     });
 
     it("should validate profitFor for 1 hour, 380,000 lockbox", async () => {
       let profit = (await onigiri.profitFor(1, tronWeb.toSun(380000)).call()).toNumber();
       console.log("\nnprofitFor for 1 hour, 380,000 lockbox: ", profit);
 
-      assert.equal(190000000, profit, "wrong value");
+      assert.equal(152000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 1 hour, 749,000 lockbox", async () => {
@@ -244,7 +244,7 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(1, tronWeb.toSun(750000)).call()).toNumber();
       console.log("\nnprofitFor for 1 hour, 750,000 lockbox: ", profit);
 
-      assert.equal(450000000, profit, "wrong value");
+      assert.equal(375000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 1 hour, 1,884,999 lockbox", async () => {
@@ -258,7 +258,7 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(1, tronWeb.toSun(1885000)).call()).toNumber();
       console.log("\nnprofitFor for 1 hour, 1,885,000 lockbox: ", profit);
 
-      assert.equal(1413750000, profit, "wrong value");
+      assert.equal(1131000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 1 hour, 1,885,001 lockbox", async () => {
@@ -279,14 +279,14 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(8, tronWeb.toSun(7500)).call()).toNumber();
       console.log("\nnprofitFor for 8 hours, 7500 lockbox: ", profit);
 
-      assert.equal(24000000, profit, "wrong value");
+      assert.equal(15000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 8 hours, 380,000 lockbox", async () => {
       let profit = (await onigiri.profitFor(8, tronWeb.toSun(380000)).call()).toNumber();
       console.log("\nnprofitFor for 8 hours, 380,000 lockbox: ", profit);
 
-      assert.equal(1520000000, profit, "wrong value");
+      assert.equal(1216000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 8 hours, 749,000 lockbox", async () => {
@@ -300,7 +300,7 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(8, tronWeb.toSun(750000)).call()).toNumber();
       console.log("\nnprofitFor for 8 hours, 750,000 lockbox: ", profit);
 
-      assert.equal(3600000000, profit, "wrong value");
+      assert.equal(3000000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 8 hours, 1,884,999 lockbox", async () => {
@@ -328,14 +328,14 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(90, tronWeb.toSun(7500)).call()).toNumber();
       console.log("\nnprofitFor for 90 hours, 7500 lockbox: ", profit);
 
-      assert.equal(270000000, profit, "wrong value");
+      assert.equal(168750000, profit, "wrong value");
     });
 
     it("should validate profitFor for 90 hours, 380,000 lockbox", async () => {
       let profit = (await onigiri.profitFor(90, tronWeb.toSun(380000)).call()).toNumber();
       console.log("\nnprofitFor for 90 hours, 380,000 lockbox: ", profit);
 
-      assert.equal(17100000000, profit, "wrong value");
+      assert.equal(13680000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 90 hours, 749,000 lockbox", async () => {
@@ -349,7 +349,7 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(90, tronWeb.toSun(750000)).call()).toNumber();
       console.log("\nnprofitFor for 90 hours, 750,000 lockbox: ", profit);
 
-      assert.equal(40500000000, profit, "wrong value");
+      assert.equal(33750000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 90 hours, 1,884,999 lockbox", async () => {
@@ -384,14 +384,15 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(900, tronWeb.toSun(7500)).call()).toNumber();
       console.log("\nnprofitFor for 900 hours, 7500 lockbox: ", profit);
 
-      assert.equal(2700000000, profit, "wrong value");
+      assert.equal(1687500000, profit, "wrong value");
     });
 
     it("should validate profitFor for 900 hours, 380,000 lockbox", async () => {
       let profit = (await onigiri.profitFor(900, tronWeb.toSun(380000)).call()).toNumber();
       console.log("\nnprofitFor for 900 hours, 380,000 lockbox: ", profit);
 
-      assert.equal(171000000000, profit, "wrong value");
+      assert.equal(136800000000, profit, "wrong value");
+      //  380000 000000 * 900 * 40 / 100000
     });
 
     it("should validate profitFor for 900 hours, 749,000 lockbox", async () => {
@@ -405,7 +406,7 @@ contract("Donations", (accounts) => {
       let profit = (await onigiri.profitFor(900, tronWeb.toSun(750000)).call()).toNumber();
       console.log("\nnprofitFor for 900 hours, 750,000 lockbox: ", profit);
 
-      assert.equal(405000000000, profit, "wrong value");
+      assert.equal(337500000000, profit, "wrong value");
     });
 
     it("should validate profitFor for 900 hours, 1,884,999 lockbox", async () => {

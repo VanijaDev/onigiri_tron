@@ -176,7 +176,7 @@ contract Onigiri {
     /**
      * @dev Updates escrow address for developer.
      * @param _address Address of escrow to be used.
-     
+     * TESTING
      */
     function updateDevEscrow(address _address) public {
         require(msg.sender == dev_0_master || msg.sender == dev_1_master, "not dev");
@@ -279,6 +279,7 @@ contract Onigiri {
      * @dev Calculates pending profit for provided customer.
      * @param _investor Address of investor.
      * @return pending profit.
+     * not TESTED
      */
     function calculateProfit(address _investor) public view returns(uint256){
         uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600);
@@ -307,16 +308,16 @@ contract Onigiri {
     function percentRateInternal(uint256 _balance) public pure returns(uint256) {
         require(_balance > 0, "balance is 0");
         /**
-            ~ 7499              - .6%
-            7500 - 379,999      - .96% 
-            380,000 - 749,999   - 1.2%
-            750,000 - 1,884,999 - 1.44% 
-            1,885,000 ~         - 1.8%          
+            ~ 7500              - .6%
+            7501 - 380,000      - .96% 
+            380,001 - 750,000   - 1.2%
+            750,001 - 1,885,000 - 1.44% 
+            1,885,001 ~         - 1.8%       
         */
-        uint256 step_1 = toSun(7500);
-        uint256 step_2 = toSun(380000);
-        uint256 step_3 = toSun(750000);
-        uint256 step_4 = toSun(1885000);
+        uint256 step_1 = toSun(7501);
+        uint256 step_2 = toSun(380001);
+        uint256 step_3 = toSun(750001);
+        uint256 step_4 = toSun(1885001);
 
         uint256 dailyPercent_0 = 25;   //  0.6%
         uint256 dailyPercent_1 = 40;   //  0.96%
@@ -326,11 +327,11 @@ contract Onigiri {
 
         if (_balance >= step_4) {
             return dailyPercent_4;
-        } else if (_balance >= step_3 && _balance < step_4) {
+        } else if (_balance > step_3 && _balance <= step_4) {
             return dailyPercent_3;
-        } else if (_balance >= step_2 && _balance < step_3) {
+        } else if (_balance > step_2 && _balance <= step_3) {
             return dailyPercent_2;
-        } else if (_balance >= step_1 && _balance < step_2) {
+        } else if (_balance > step_1 && _balance <= step_2) {
             return dailyPercent_1;
         }
 
