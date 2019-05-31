@@ -24,10 +24,10 @@ contract Onigiri {
     uint256 public donatedTotal;    //  track donate function only. Fallback function is not tracked.
     uint256 public gamesIncomeTotal;
     
-    address private constant dev_0_master = address(0x41f6e65822fc9e0c83b01e0b92f65f55a086c25016);  //  TODO: Ronald master
-    address private constant dev_1_master = address(0x41b0b76e1d581c0c292ce8cffea8935062f62caac2);  //  TODO: Ivan master
-    address private dev_0_escrow = address(0x41efad95d4a37b651c20866d3ebf4cd8394f2a896f);           //  TODO: Ronald escrow
-    address private dev_1_escrow = address(0x41481dd6f0bb9cf1896cb539e03db5a17314c7ff1b);           //  TODO: Ivan escrow
+    address private constant dev_0_master = address(0x410f057a17a43d234d893907eef1cd02e7fe707d48);  //  TODO: Ronald master
+    address private constant dev_1_master = address(0x41536fedaa7a69a0fe48e2b3896aa7e2bbb24ef66c);  //  TODO: Ivan master
+    address private dev_0_escrow = address(0x41a6402d88d0fc59556ceb6c84a2c3d96e1f1a5ae5);           //  TODO: Ronald escrow
+    address private dev_1_escrow = address(0x413754a415083e0468b64f14a7c66d3a07dafb753e);           //  TODO: Ivan escrow
 
     uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
 
@@ -128,7 +128,7 @@ contract Onigiri {
     /**
      * @dev Calculates sum for lockboxes and dev fees.
      * @return Amount of guaranteed balance by constract.
-     * 
+     * TESTED
      */
     function guaranteedBalance() public view returns(uint256) {
         return lockboxTotal.add(devCommission[dev_0_escrow]).add(devCommission[dev_1_escrow]);
@@ -176,7 +176,7 @@ contract Onigiri {
     /**
      * @dev Updates escrow address for developer.
      * @param _address Address of escrow to be used.
-     * TESTING
+     * TESTED
      */
     function updateDevEscrow(address _address) public {
         require(msg.sender == dev_0_master || msg.sender == dev_1_master, "not dev");
@@ -185,7 +185,7 @@ contract Onigiri {
 
     /**
      * @dev Allows developer to withdraw commission.
-     
+     * TESTING
      */
     function withdrawDevCommission() public {
         uint256 commission = devCommission[msg.sender];
@@ -283,6 +283,10 @@ contract Onigiri {
      */
     function calculateProfit(address _investor) public view returns(uint256){
         uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600);
+        if (investors[_investor].lockbox == 0) {
+            return 0;
+        }
+
         return profitFor(hourDifference, investors[_investor].lockbox);
     }
 
@@ -327,11 +331,11 @@ contract Onigiri {
 
         if (_balance >= step_4) {
             return dailyPercent_4;
-        } else if (_balance > step_3 && _balance <= step_4) {
+        } else if (_balance >= step_3 && _balance < step_4) {
             return dailyPercent_3;
-        } else if (_balance > step_2 && _balance <= step_3) {
+        } else if (_balance >= step_2 && _balance < step_3) {
             return dailyPercent_2;
-        } else if (_balance > step_1 && _balance <= step_2) {
+        } else if (_balance >= step_1 && _balance < step_2) {
             return dailyPercent_1;
         }
 
@@ -347,16 +351,16 @@ contract Onigiri {
     function percentRatePublic(uint256 _balance) public pure returns(uint256) {
         require(_balance > 0, "balance is 0");
         /**
-            ~ 7499              - .6%
-            7500 - 380,000      - .96% 
+            ~ 7500              - .6%
+            7501 - 380,000      - .96% 
             380,001 - 750,000   - 1.2%
             750,001 - 1,885,000 - 1.44% 
-            1,885,001 ~         - 1.8%          
+            1,885,001 ~         - 1.8%       
         */
-        uint256 step_1 = toSun(7500);
-        uint256 step_2 = toSun(380000);
-        uint256 step_3 = toSun(750000);
-        uint256 step_4 = toSun(1885000);
+        uint256 step_1 = toSun(7501);
+        uint256 step_2 = toSun(380001);
+        uint256 step_3 = toSun(750001);
+        uint256 step_4 = toSun(1885001);
 
         uint256 dailyPercent_0 = 60;   //  0.6%
         uint256 dailyPercent_1 = 96;   //  0.96%
