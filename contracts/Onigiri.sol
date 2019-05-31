@@ -2,6 +2,13 @@ pragma solidity ^0.4.25;
 
 import "./SafeMath.sol";
 
+/**
+ * TODO test:
+ * pending profit
+ * withdrawDevCommission
+ * withdrawAffiliateCommission
+ */
+
 contract Onigiri {
     using SafeMath for uint256;
 
@@ -185,7 +192,7 @@ contract Onigiri {
 
     /**
      * @dev Allows developer to withdraw commission.
-     * TESTING
+     * TESTED
      */
     function withdrawDevCommission() public {
         uint256 commission = devCommission[msg.sender];
@@ -198,7 +205,7 @@ contract Onigiri {
     
     /**
      * @dev Withdraws affiliate commission for current address.
-     
+     * TESTED
      */
     function withdrawAffiliateCommission() public {
         uint256 commission = affiliateCommission[msg.sender];
@@ -215,7 +222,7 @@ contract Onigiri {
 
     /**
      * @dev Allows investor to withdraw profit.
-     
+     * not TESTED
      */
     function withdrawProfit() public {
         uint256 profit = calculateProfit(msg.sender);
@@ -241,7 +248,7 @@ contract Onigiri {
     /**
      * @dev Allows investor to withdraw lockbox funds, close deposit and clear all data.
      * @notice Pending profit stays in contract.
-     
+     * TESTED
      */
     function withdrawLockBoxAndClose() public {
         uint256 lockboxAmount = getLockBox(msg.sender);
@@ -258,7 +265,7 @@ contract Onigiri {
     
     /**
      * @dev Reinvests pending profit.
-     
+     * not TESTED
      */
     function reinvestProfit() public {
         uint256 profit = calculateProfit(msg.sender);
