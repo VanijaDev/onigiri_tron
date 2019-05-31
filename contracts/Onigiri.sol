@@ -36,7 +36,7 @@ contract Onigiri {
     address private dev_0_escrow = address(0x41a6402d88d0fc59556ceb6c84a2c3d96e1f1a5ae5);           //  TODO: Ronald escrow
     address private dev_1_escrow = address(0x413754a415083e0468b64f14a7c66d3a07dafb753e);           //  TODO: Ivan escrow
 
-    uint256 public constant minInvest = 25 * (10 ** 6); //  TODO: after tests: 0xEE6B280;  //250 * (10 ** 6);
+    uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
 
     event Invested(address investor, uint256 amount);
     event Renvested(address investor, uint256 amount);
