@@ -37,6 +37,8 @@ contract Onigiri {
     address private dev_1_escrow = address(0x413754a415083e0468b64f14a7c66d3a07dafb753e);           //  TODO: Ivan escrow
 
     uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
+    uint256 public constant whaleLimitLockbox = 0x3A352944000;  //  4 000 000 * (10 ** 6)
+    uint256 public constant whaleLimitInvest = 0x5D21DBA000;  //  400 000 * (10 ** 6)
 
     event Invested(address investor, uint256 amount);
     event Renvested(address investor, uint256 amount);
@@ -107,7 +109,7 @@ contract Onigiri {
      * @dev Returns withdrawn amount for investor.
      * @param _address Investor address.
      * @return withdrawn amount.
-     
+     * TESTED
      */
     function getWithdrawn(address _address) public view returns(uint256) {
         return investors[_address].withdrawn;
@@ -144,14 +146,20 @@ contract Onigiri {
     /**
      * @dev User invests funds.
      * @param _affiliate affiliate address.
-     * TESTED
+     * TODO: TESTED
      */
     function invest(address _affiliate) public payable {
         require(msg.value >= minInvest, "min 250 TRX");
 
+        if(lockboxTotal <= whaleLimitLockbox) {
+            require(msg.value <= whaleLimitInvest, "max invest whaleLimitLockbox TRX");
+        }
+
         uint256 profit = calculateProfit(msg.sender);
         if(profit > 0){
-            msg.sender.transfer(profit);
+            if(address(this).balance.sub(profit) >= guaranteedBalance()) {
+                withdrawProfitFor(msg.sender, profit);
+            }
         }
 
         //  1% - to affiliateCommission
@@ -222,28 +230,12 @@ contract Onigiri {
 
     /**
      * @dev Allows investor to withdraw profit.
-     * not TESTED
+     * @param _amount   Amount to withdraw.
+     * TESTED
      */
-    function withdrawProfit() public {
-        uint256 profit = calculateProfit(msg.sender);
-        require(profit > 0, "no profit");
-        require(address(this).balance.sub(profit) >= guaranteedBalance(), "not enough funds");
-
-        investors[msg.sender].lastInvestmentTime = now;
-        investors[msg.sender].withdrawn = investors[msg.sender].withdrawn.add(profit);
-
-        withdrawnProfitTotal = withdrawnProfitTotal.add(profit);
-        
-        //  2% - to developers
-        uint256 devFee = profit.div(100);
-        devCommission[dev_0_escrow] = devCommission[dev_0_escrow].add(devFee);
-        devCommission[dev_1_escrow] = devCommission[dev_1_escrow].add(devFee);
-        
-        //  3% - stay in contract
-        msg.sender.transfer(profit.div(100).mul(95));
-
-        emit WithdrawnProfit(msg.sender, profit);
-    }
+     function withdrawProfit(uint256 _amount) public {
+        withdrawProfitFor(msg.sender, _amount);
+     }
 
     /**
      * @dev Allows investor to withdraw lockbox funds, close deposit and clear all data.
@@ -265,7 +257,7 @@ contract Onigiri {
     
     /**
      * @dev Reinvests pending profit.
-     * not TESTED
+     * Tested
      */
     function reinvestProfit() public {
         uint256 profit = calculateProfit(msg.sender);
@@ -286,7 +278,7 @@ contract Onigiri {
      * @dev Calculates pending profit for provided customer.
      * @param _investor Address of investor.
      * @return pending profit.
-     * not TESTED
+     * Tested
      */
     function calculateProfit(address _investor) public view returns(uint256){
         // uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600); TODO: after tests:
@@ -400,5 +392,34 @@ contract Onigiri {
     */
     function toSun(uint256 _trx) private pure returns (uint256 _res) {
         _res = _trx.mul(10**6);
+    }
+
+
+     /**
+     * @dev Wothdraws profit for investor.
+     * @param _investor     Investor address.
+     * @param _amount       Amount to withdraw.
+     */
+     function withdrawProfitFor(address _investor, uint256 _amount) private {
+        require(_amount > 0, "must be > 0");
+
+        uint256 profit = calculateProfit(_investor);
+        require(_amount <= profit, "not enough profit");
+        require(address(this).balance.sub(_amount) >= guaranteedBalance(), "not enough funds");
+
+        investors[_investor].lastInvestmentTime = now;
+        investors[_investor].withdrawn = investors[_investor].withdrawn.add(_amount);
+
+        withdrawnProfitTotal = withdrawnProfitTotal.add(_amount);
+        
+        //  2% - to developers
+        uint256 devFee = _amount.div(100);
+        devCommission[dev_0_escrow] = devCommission[dev_0_escrow].add(devFee);
+        devCommission[dev_1_escrow] = devCommission[dev_1_escrow].add(devFee);
+        
+        //  3% - stay in contract
+        _investor.transfer(_amount.div(100).mul(95));
+
+        emit WithdrawnProfit(_investor, _amount);
     }
 }
