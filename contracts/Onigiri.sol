@@ -34,7 +34,7 @@ contract Onigiri {
     uint256 public constant whaleLimitInvest = 0x5D21DBA000;  //  400 000 * (10 ** 6)
 
     event Invested(address investor, uint256 amount);
-    event Renvested(address investor, uint256 amount);
+    event Reinvested(address investor, uint256 amount);
     event WithdrawnAffiliateCommission(address affiliate, uint256 amount);
     event WithdrawnProfit(address investor, uint256 amount);
     event WithdrawnLockbox(address investor, uint256 amount);
@@ -259,41 +259,27 @@ contract Onigiri {
         
         uint256 lockboxFromProfit = profit.div(100).mul(84);
         investors[msg.sender].lockbox = investors[msg.sender].lockbox.add(lockboxFromProfit);
-        investors[msg.sender].lastInvestmentTime = now;
         investors[msg.sender].invested = investors[msg.sender].invested.add(profit);
+        investors[msg.sender].lastInvestmentTime = now;
+        delete investors[msg.sender].withdrawn;
 
         lockboxTotal = lockboxTotal.add(lockboxFromProfit);
 
-        emit Renvested(msg.sender, profit);
+        emit Reinvested(msg.sender, profit);
     }
 
     /**
      * @dev Calculates pending profit for provided customer.
      * @param _investor Address of investor.
      * @return pending profit.
-     * Tested
-     */
-    function calculateProfit(address _investor) public view returns(uint256){
-        // uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600); TODO: after tests:
-        uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(60);
-        if (investors[_investor].lockbox == 0) {
-            return 0;
-        }
-
-        return profitFor(hourDifference, investors[_investor].lockbox);
-    }
-
-    /**
-     * @dev Calculates pending profit for provided duration, rate, lockbox amount.
-     * @param _duration Investment duration.
-     * @param _lockboxAmount Amount in lockbox. Value in Sun.
-     * @return pending profit.
      * TESTED
      */
-    function profitFor(uint256 _duration, uint256 _lockboxAmount) public pure returns (uint256) {
-        uint256 rate = percentRateInternal(_lockboxAmount);
-        uint256 calculatedPercent = _duration.mul(rate);
-        return _lockboxAmount.mul(calculatedPercent).div(100000);
+    function calculateProfit(address _investor) public view returns(uint256){
+        uint256 hourDifference = now.sub(investors[_investor].lastInvestmentTime).div(3600);
+        uint256 rate = percentRateInternal(investors[_investor].lockbox);
+        uint256 calculatedPercent = hourDifference.mul(rate);
+        uint256 profitTotal = investors[_investor].lockbox.div(100000).mul(calculatedPercent);
+        return profitTotal.sub(investors[_investor].withdrawn);
     }
 
     /**
