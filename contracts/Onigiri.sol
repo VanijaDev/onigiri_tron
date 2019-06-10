@@ -2,13 +2,6 @@ pragma solidity ^0.4.25;
 
 import "./SafeMath.sol";
 
-/**
- * TODO test:
- * pending profit
- * withdrawDevCommission
- * withdrawAffiliateCommission
- */
-
 contract Onigiri {
     using SafeMath for uint256;
 
