@@ -143,7 +143,6 @@ contract Onigiri {
      */
     function invest(address _affiliate) public payable {
         require(msg.value >= minInvest, "min 250 TRX");
-
         if(lockboxTotal <= whaleLimitLockbox) {
             require(msg.value <= whaleLimitInvest, "max invest whaleLimitLockbox TRX");
         }
