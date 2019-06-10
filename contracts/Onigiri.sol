@@ -302,7 +302,7 @@ contract Onigiri {
      * @return rate for lockbox balance.
      * TESTED
      */
-    function percentRateInternal(uint256 _balance) public pure returns(uint256) {
+    function percentRateInternal(uint256 _balance) private pure returns(uint256) {
         require(_balance > 0, "balance is 0");
         /**
             ~ 7500              - .6%
