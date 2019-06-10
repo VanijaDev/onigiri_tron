@@ -385,7 +385,6 @@ contract Onigiri {
         require(_amount <= profit, "not enough profit");
         require(address(this).balance.sub(_amount) >= guaranteedBalance(), "not enough funds");
 
-        investors[_investor].lastInvestmentTime = now;
         investors[_investor].withdrawn = investors[_investor].withdrawn.add(_amount);
 
         withdrawnProfitTotal = withdrawnProfitTotal.add(_amount);
