@@ -24,10 +24,10 @@ contract Onigiri {
     uint256 public donatedTotal;    //  track donate function only. Fallback function is not tracked.
     uint256 public gamesIncomeTotal;
     
-    address private constant dev_0_master = address(0x410f057a17a43d234d893907eef1cd02e7fe707d48);  //  TODO: Ronald master
-    address private constant dev_1_master = address(0x41536fedaa7a69a0fe48e2b3896aa7e2bbb24ef66c);  //  TODO: Ivan master
-    address private dev_0_escrow = address(0x41a6402d88d0fc59556ceb6c84a2c3d96e1f1a5ae5);           //  TODO: Ronald escrow
-    address private dev_1_escrow = address(0x413754a415083e0468b64f14a7c66d3a07dafb753e);           //  TODO: Ivan escrow
+    address private constant dev_0_master = address(0x41beb78279a97e0986bef2e5642d1f921e881eb02b);  //  TODO: Ronald master
+    address private constant dev_1_master = address(0x410038508287cc02f0994cd106fd6880592626cf5d);  //  TODO: Ivan master
+    address private dev_0_escrow = address(0x4130f18fd6968a07afd8ea706418e1063a936460ff);           //  TODO: Ronald escrow
+    address private dev_1_escrow = address(0x41e56e1307a676b0addc17b66333e26b5b2721572b);           //  TODO: Ivan escrow
 
     uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
     uint256 public constant whaleLimitLockbox = 0x3A352944000;  //  4 000 000 * (10 ** 6)
@@ -288,7 +288,6 @@ contract Onigiri {
      * TESTED
      */
     function percentRateInternal(uint256 _balance) private pure returns(uint256) {
-        require(_balance > 0, "balance is 0");
         /**
             ~ 7500              - .6%
             7501 - 380,000      - .96% 
