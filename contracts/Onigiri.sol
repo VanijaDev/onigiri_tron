@@ -147,11 +147,8 @@ contract Onigiri {
             require(msg.value <= whaleLimitInvest, "max invest whaleLimitLockbox TRX");
         }
 
-        uint256 profit = calculateProfit(msg.sender);
-        if(profit > 0){
-            if(address(this).balance.sub(profit) >= guaranteedBalance()) {
-                withdrawProfitFor(msg.sender, profit);
-            }
+        if(calculateProfit(msg.sender) > 0){
+            withdrawProfit();
         }
 
         //  1% - to affiliateCommission
