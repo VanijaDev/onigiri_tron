@@ -442,4 +442,186 @@ contract("Donations", (accounts) => {
       assert.equal(tronWeb.toSun(252), events[0].result.amount, "wrong amount in WithdrawnLockbox event");
     });
   });
+
+  describe("withdrawLockBoxPartially", () => {
+    it("should fail if 0", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      //  2 - withdraw
+      let failed = false;
+      try {
+        await onigiri.withdrawLockBoxPartially(0).send({
+          from: INVESTOR_0,
+          shouldPollResponse: true
+        });
+      } catch (error) {
+        failed = true;
+      }
+
+      assert.isTrue(failed, "should fail if 0");
+    });
+
+    it("should fail if No investments", async () => {
+      let failed = false;
+      try {
+        await onigiri.withdrawLockBoxPartially(tronWeb.toSun(300)).send({
+          from: INVESTOR_0,
+          shouldPollResponse: true
+        });
+      } catch (error) {
+        failed = true;
+      }
+
+      assert.isTrue(failed, "should fail if No investments");
+    });
+
+    it("should fail if Not enough lockBox", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      //  2 - withdraw
+      let failed = false;
+      try {
+        await onigiri.withdrawLockBoxPartially(tronWeb.toSun(301)).send({
+          from: INVESTOR_0,
+          shouldPollResponse: true
+        });
+      } catch (error) {
+        failed = true;
+      }
+
+      assert.isTrue(failed, "should fail if Not enough lockBox");
+    });
+
+    it("should call withdrawLockBoxAndClose if _amount == lockbox amount", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      //  2 - withdraw
+      await onigiri.withdrawLockBoxPartially(tronWeb.toSun(252)).send({
+        from: INVESTOR_0,
+        shouldPollResponse: true
+      });
+
+      //  3 - event
+      let events = await tronWeb.getEventResult(onigiri.address, {
+        eventName: 'WithdrawnLockbox',
+        size: 1,
+        page: 1
+      });
+
+      assert.equal(tronWeb.address.toHex(INVESTOR_0), tronWeb.address.toHex(events[0].result.investor), "wrong investor address in WithdrawnLockbox event");
+      assert.equal(tronWeb.toSun(252), events[0].result.amount, "wrong amount in WithdrawnLockbox event, when _amount == lockbox amount");
+    });
+
+    it("should update lockbox amount", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      //  2 - withdraw
+      await onigiri.withdrawLockBoxPartially(tronWeb.toSun(200)).send({
+        from: INVESTOR_0,
+        shouldPollResponse: true
+      });
+
+      assert.equal(tronWeb.toSun(52), (await onigiri.getLockBox(INVESTOR_0).call()).toNumber(), "lockbox should be 52 after partial lockbox withdrawal");
+    });
+
+    it("should update lockboxTotal", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      //  2 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(350),
+        shouldPollResponse: true
+      });
+
+      //  3 - withdraw
+      await onigiri.withdrawLockBoxPartially(tronWeb.toSun(200)).send({
+        from: INVESTOR_0,
+        shouldPollResponse: true
+      });
+
+      assert.equal(tronWeb.toSun(346), (await onigiri.lockboxTotal().call()).toNumber(), "lockbox should be 346 after partial lockbox withdrawal");
+    });
+
+    it("should transfer to investor", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      let INVESTOR_0_before = BigNumber(await tronWeb.trx.getBalance(INVESTOR_0)).toNumber();
+
+      //  2 - withdraw
+      await onigiri.withdrawLockBoxPartially(tronWeb.toSun(200)).send({
+        from: INVESTOR_0,
+        shouldPollResponse: true
+      });
+
+      //  3 - check REFERRAL_0 increased
+      let INVESTOR_0_after = BigNumber(await tronWeb.trx.getBalance(INVESTOR_0)).toNumber();
+      assert.isTrue(INVESTOR_0_after > INVESTOR_0_before, "INVESTOR_0 balance should be increased after withdraw");
+    });
+
+    it("should emit WithdrawnLockBoxPartially event", async () => {
+      //  1 - invest from INVESTOR_0
+      await tronWeb.setPrivateKey(INVESTOR_0_PRIV);
+      await onigiri.invest(REFERRAL_0).send({
+        from: INVESTOR_0,
+        callValue: tronWeb.toSun(300),
+        shouldPollResponse: true
+      });
+
+      let INVESTOR_0_before = BigNumber(await tronWeb.trx.getBalance(INVESTOR_0)).toNumber();
+
+      //  2 - withdraw
+      await onigiri.withdrawLockBoxPartially(tronWeb.toSun(200)).send({
+        from: INVESTOR_0,
+        shouldPollResponse: true
+      });
+
+      //  3 - event
+      let events = await tronWeb.getEventResult(onigiri.address, {
+        eventName: 'WithdrawnLockBoxPartially',
+        size: 1,
+        page: 1
+      });
+
+      assert.equal(tronWeb.address.toHex(INVESTOR_0), tronWeb.address.toHex(events[0].result.investor), "wrong investor address in WithdrawnLockBoxPartially event");
+      assert.equal(tronWeb.toSun(200), events[0].result.amount, "wrong amount in WithdrawnLockBoxPartially event, should be 200");
+    });
+  });
 });

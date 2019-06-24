@@ -24,20 +24,21 @@ contract Onigiri {
     uint256 public donatedTotal;    //  track donate function only. Fallback function is not tracked.
     uint256 public gamesIncomeTotal;
     
-    address private constant dev_0_master = address(0x41beb78279a97e0986bef2e5642d1f921e881eb02b);  //  TODO: Ronald master
-    address private constant dev_1_master = address(0x410038508287cc02f0994cd106fd6880592626cf5d);  //  TODO: Ivan master
-    address private dev_0_escrow = address(0x4130f18fd6968a07afd8ea706418e1063a936460ff);           //  TODO: Ronald escrow
-    address private dev_1_escrow = address(0x41e56e1307a676b0addc17b66333e26b5b2721572b);           //  TODO: Ivan escrow
+    address private constant dev_0_master = address(0x414af136eca69c4f3e2a7ee25b9bb98e5b6e8c1c57);  //  TODO: Ronald master
+    address private constant dev_1_master = address(0x418a3880ae446488a1ed024f8c1fee4876c8b920a7);  //  TODO: Ivan master
+    address private dev_0_escrow = address(0x416ef669ba1352471706ebbbc065be32bebcc71136);           //  TODO: Ronald escrow
+    address private dev_1_escrow = address(0x41f6bbe2c6a123c57639fd483c299aaae895635b9f);           //  TODO: Ivan escrow
 
     uint256 public constant minInvest = 0xEE6B280;  //250 * (10 ** 6);
     uint256 public constant whaleLimitLockbox = 0x3A352944000;  //  4 000 000 * (10 ** 6)
     uint256 public constant whaleLimitInvest = 0x5D21DBA000;  //  400 000 * (10 ** 6)
 
-    event Invested(address investor, uint256 amount);
-    event Reinvested(address investor, uint256 amount);
-    event WithdrawnAffiliateCommission(address affiliate, uint256 amount);
-    event WithdrawnProfit(address investor, uint256 amount);
-    event WithdrawnLockbox(address investor, uint256 amount);
+    event Invested(address indexed investor, uint256 indexed amount);
+    event Reinvested(address indexed investor, uint256 indexed amount);
+    event WithdrawnAffiliateCommission(address indexed affiliate, uint256 indexed amount);
+    event WithdrawnProfit(address indexed investor, uint256 amount);
+    event WithdrawnLockBoxPartially(address indexed investor, uint256 indexed amount);
+    event WithdrawnLockbox(address indexed investor, uint256 indexed amount);
 
 
     /**
@@ -257,6 +258,30 @@ contract Onigiri {
         msg.sender.transfer(lockboxAmount);
 
         emit WithdrawnLockbox(msg.sender, lockboxAmount);
+    }
+
+    /**
+     * @dev Allows investor to withdraw part of lockbox funds.
+     * @param _amount Amount to withdraw.
+     * TESTED
+     */
+    function withdrawLockBoxPartially(uint256 _amount) public {
+        require(_amount > 0, "No amount");
+
+        uint256 lockboxAmount = getLockBox(msg.sender);
+        require(lockboxAmount > 0, "No investments");
+        require(_amount <= lockboxAmount, "Not enough lockBox");
+
+        if (_amount == lockboxAmount) {
+            withdrawLockBoxAndClose();
+            return;
+        }
+
+        investors[msg.sender].lockbox = investors[msg.sender].lockbox.sub(_amount);
+        lockboxTotal = lockboxTotal.sub(_amount);
+        msg.sender.transfer(_amount);
+
+        emit WithdrawnLockBoxPartially(msg.sender, _amount);
     }
     
     /**
