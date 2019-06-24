@@ -183,30 +183,30 @@ contract("Donations", (accounts) => {
       assert.equal(60, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(7500)).call()).toNumber(), "should be 60 for 7500");
     });
 
-    it("should validate percentRatePublic is 96 if >= 7501 && < 380,000", async () => {
-      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(7501)).call()).toNumber(), "should be 96 for 7501");
-      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(38000)).call()).toNumber(), "should be 96 for 38000");
-      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(379999)).call()).toNumber(), "should be 96 for 379999");
-      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(380000)).call()).toNumber(), "should be 96 for 380000");
+    it("should validate percentRatePublic is 72 if >= 7501 && < 380,000", async () => {
+      assert.equal(72, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(7501)).call()).toNumber(), "should be 72 for 7501");
+      assert.equal(72, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(38000)).call()).toNumber(), "should be 72 for 38000");
+      assert.equal(72, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(379999)).call()).toNumber(), "should be 72 for 379999");
+      assert.equal(72, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(380000)).call()).toNumber(), "should be 72 for 380000");
     });
 
-    it("should validate percentRatePublic is 120 if >= 380,001 && < 750,000", async () => {
-      assert.equal(120, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(380001)).call()).toNumber(), "should be 120 for 380001");
-      assert.equal(120, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(700000)).call()).toNumber(), "should be 120 for 700000");
-      assert.equal(120, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(749999)).call()).toNumber(), "should be 120 for 749999");
-      assert.equal(120, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(750000)).call()).toNumber(), "should be 120 for 750000");
+    it("should validate percentRatePublic is 84 if >= 380,001 && < 750,000", async () => {
+      assert.equal(84, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(380001)).call()).toNumber(), "should be 84 for 380001");
+      assert.equal(84, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(700000)).call()).toNumber(), "should be 84 for 700000");
+      assert.equal(84, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(749999)).call()).toNumber(), "should be 84 for 749999");
+      assert.equal(84, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(750000)).call()).toNumber(), "should be 84 for 750000");
     });
 
-    it("should validate percentRatePublic is 144 if >= 750,001 && < 1,885,000", async () => {
-      assert.equal(144, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(750001)).call()).toNumber(), "should be 144 for 750001");
-      assert.equal(144, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1884000)).call()).toNumber(), "should be 144 for 1884000");
-      assert.equal(144, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1884999)).call()).toNumber(), "should be 144 for 1884999");
-      assert.equal(144, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1885000)).call()).toNumber(), "should be 144 for 1885000");
+    it("should validate percentRatePublic is 96 if >= 750,001 && < 1,885,000", async () => {
+      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(750001)).call()).toNumber(), "should be 96 for 750001");
+      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1884000)).call()).toNumber(), "should be 96 for 1884000");
+      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1884999)).call()).toNumber(), "should be 96 for 1884999");
+      assert.equal(96, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1885000)).call()).toNumber(), "should be 96 for 1885000");
     });
 
-    it("should validate percentRatePublic is 180 if >= 1,885,001", async () => {
-      assert.equal(180, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1885001)).call()).toNumber(), "should be 180 for 1,885,001");
-      assert.equal(180, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1886000)).call()).toNumber(), "should be 180 for 1,886,000");
+    it("should validate percentRatePublic is 108 if >= 1,885,001", async () => {
+      assert.equal(108, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1885001)).call()).toNumber(), "should be 108 for 1,885,001");
+      assert.equal(108, BigNumber(await onigiri.percentRatePublic(tronWeb.toSun(1886000)).call()).toNumber(), "should be 108 for 1,886,000");
     });
   });
 

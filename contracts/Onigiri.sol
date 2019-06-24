@@ -289,11 +289,11 @@ contract Onigiri {
      */
     function percentRateInternal(uint256 _balance) private pure returns(uint256) {
         /**
-            ~ 7500              - .6%
-            7501 - 380,000      - .96% 
-            380,001 - 750,000   - 1.2%
-            750,001 - 1,885,000 - 1.44% 
-            1,885,001 ~         - 1.8%       
+            ~ 7500              - 0.6%
+            7501 - 380,000      - 0.72% 
+            380,001 - 750,000   - 0.84%
+            750,001 - 1,885,000 - 0.96% 
+            1,885,001 ~         - 1.08%       
         */
         uint256 step_1 = toSun(7501);
         uint256 step_2 = toSun(380001);
@@ -301,10 +301,10 @@ contract Onigiri {
         uint256 step_4 = toSun(1885001);
 
         uint256 dailyPercent_0 = 25;   //  0.6%
-        uint256 dailyPercent_1 = 40;   //  0.96%
-        uint256 dailyPercent_2 = 50;   //  1.2%
-        uint256 dailyPercent_3 = 60;   //  1.44%
-        uint256 dailyPercent_4 = 75;   //  1.8%
+        uint256 dailyPercent_1 = 30;   //  0.72%
+        uint256 dailyPercent_2 = 35;   //  0.84%
+        uint256 dailyPercent_3 = 40;   //  0.96%
+        uint256 dailyPercent_4 = 45;   //  1.08%
 
         if (_balance >= step_4) {
             return dailyPercent_4;
@@ -328,11 +328,11 @@ contract Onigiri {
     function percentRatePublic(uint256 _balance) public pure returns(uint256) {
         require(_balance > 0, "balance is 0");
         /**
-            ~ 7500              - .6%
-            7501 - 380,000      - .96% 
-            380,001 - 750,000   - 1.2%
-            750,001 - 1,885,000 - 1.44% 
-            1,885,001 ~         - 1.8%       
+            ~ 7500              - 0.6%
+            7501 - 380,000      - 0.72% 
+            380,001 - 750,000   - 0.84%
+            750,001 - 1,885,000 - 0.96% 
+            1,885,001 ~         - 1.08%       
         */
         uint256 step_1 = toSun(7501);
         uint256 step_2 = toSun(380001);
@@ -340,10 +340,10 @@ contract Onigiri {
         uint256 step_4 = toSun(1885001);
 
         uint256 dailyPercent_0 = 60;   //  0.6%
-        uint256 dailyPercent_1 = 96;   //  0.96%
-        uint256 dailyPercent_2 = 120;   //  1.2%
-        uint256 dailyPercent_3 = 144;   //  1.44%
-        uint256 dailyPercent_4 = 180;   //  1.8%
+        uint256 dailyPercent_1 = 72;   //  0.72%
+        uint256 dailyPercent_2 = 84;   //  0.84%
+        uint256 dailyPercent_3 = 96;   //  0.96%
+        uint256 dailyPercent_4 = 108;  //  1.08%
 
         if (_balance >= step_4) {
             return dailyPercent_4;
