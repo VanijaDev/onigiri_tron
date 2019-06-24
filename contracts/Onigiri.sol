@@ -221,13 +221,28 @@ contract Onigiri {
     }
 
     /**
-     * @dev Allows investor to withdraw profit.
-     * @param _amount   Amount to withdraw.
+     * @dev Withdraws profit.
      * TESTED
      */
-     function withdrawProfit(uint256 _amount) public {
-        withdrawProfitFor(msg.sender, _amount);
-     }
+    function withdrawProfit() public {
+        uint256 profit = calculateProfit(msg.sender);
+        require(profit > 0, "No profit");
+        require(address(this).balance.sub(profit) >= guaranteedBalance(), "Not enough funds");
+        
+        investors[msg.sender].withdrawn = investors[msg.sender].withdrawn.add(profit);
+        withdrawnProfitTotal = withdrawnProfitTotal.add(profit);
+        investors[msg.sender].lastInvestmentTime = now;
+        
+        //  2% - to developers
+        uint256 devFee = profit.div(100);
+        devCommission[dev_0_escrow] = devCommission[dev_0_escrow].add(devFee);
+        devCommission[dev_1_escrow] = devCommission[dev_1_escrow].add(devFee);
+        
+        //  3% - stay in contract
+        msg.sender.transfer(profit.div(100).mul(95));
+
+        emit WithdrawnProfit(msg.sender, profit);
+    }
 
     /**
      * @dev Allows investor to withdraw lockbox funds, close deposit and clear all data.
@@ -369,33 +384,5 @@ contract Onigiri {
     */
     function toSun(uint256 _trx) private pure returns (uint256 _res) {
         _res = _trx.mul(10**6);
-    }
-
-
-     /**
-     * @dev Wothdraws profit for investor.
-     * @param _investor     Investor address.
-     * @param _amount       Amount to withdraw.
-     */
-     function withdrawProfitFor(address _investor, uint256 _amount) private {
-        require(_amount > 0, "must be > 0");
-
-        uint256 profit = calculateProfit(_investor);
-        require(_amount <= profit, "not enough profit");
-        require(address(this).balance.sub(_amount) >= guaranteedBalance(), "not enough funds");
-
-        investors[_investor].withdrawn = investors[_investor].withdrawn.add(_amount);
-
-        withdrawnProfitTotal = withdrawnProfitTotal.add(_amount);
-        
-        //  2% - to developers
-        uint256 devFee = _amount.div(100);
-        devCommission[dev_0_escrow] = devCommission[dev_0_escrow].add(devFee);
-        devCommission[dev_1_escrow] = devCommission[dev_1_escrow].add(devFee);
-        
-        //  3% - stay in contract
-        _investor.transfer(_amount.div(100).mul(95));
-
-        emit WithdrawnProfit(_investor, _amount);
     }
 }
